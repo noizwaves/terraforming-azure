@@ -1,17 +1,17 @@
 output "mysql_dns" {
-  value = "mysql.${azurerm_dns_a_record.mysql.zone_name}"
+  value = "${azurerm_dns_a_record.mysql.name}.${azurerm_dns_a_record.mysql.zone_name}"
 }
 
 output "tcp_domain" {
-  value = "tcp.${azurerm_dns_a_record.tcp.zone_name}"
+  value = "${azurerm_dns_a_record.tcp.name}.${azurerm_dns_a_record.tcp.zone_name}"
 }
 
 output "sys_domain" {
-  value = "sys.${azurerm_dns_a_record.sys.zone_name}"
+  value = "${replace(azurerm_dns_a_record.sys.name, ".*", "")}.${azurerm_dns_a_record.sys.zone_name}"
 }
 
 output "apps_domain" {
-  value = "apps.${azurerm_dns_a_record.apps.zone_name}"
+  value = "${replace(azurerm_dns_a_record.apps.name, ".*", "")}.${azurerm_dns_a_record.apps.zone_name}"
 }
 
 output "web_lb_name" {

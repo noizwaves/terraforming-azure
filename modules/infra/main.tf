@@ -254,7 +254,7 @@ locals {
 }
 
 resource "azurerm_dns_zone" "env_dns_zone" {
-  name                = "${var.dns_subdomain != "" ? var.dns_subdomain : local.dns_subdomain}.${var.dns_suffix}"
+  name                = "${var.dns_suffix}"
   resource_group_name = "${azurerm_resource_group.pcf_resource_group.name}"
 }
 

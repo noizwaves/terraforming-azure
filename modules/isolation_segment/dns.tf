@@ -1,5 +1,5 @@
 resource "azurerm_dns_a_record" "iso" {
-  name                = "*.iso"
+  name                = "*.iso.${var.env_name}"
   count               = "${var.count}"
   zone_name           = "${var.dns_zone}"
   resource_group_name = "${var.resource_group_name}"
