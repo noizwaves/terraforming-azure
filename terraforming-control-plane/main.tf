@@ -8,6 +8,11 @@ provider "azurerm" {
   version = "~> 1.22"
 }
 
+provider "acme" {
+  server_url = "https://acme-v02.api.letsencrypt.org/directory"
+  version = "~> 1.1"
+}
+
 terraform {
   required_version = "< 0.12.0"
 }
@@ -55,4 +60,50 @@ module "control_plane" {
 
   location    = "${var.location}"
   external_db = "${var.external_db}"
+}
+
+resource "azurerm_dns_caa_record" "caa" {
+  name                = "@"
+  zone_name           = "${module.infra.dns_zone_name}"
+  resource_group_name = "${module.infra.resource_group_name}"
+  ttl                 = "60"
+
+  record {
+    flags = 0
+    tag = "issue"
+    value = "letsencrypt.org"
+  }
+}
+
+resource "tls_private_key" "private_key" {
+  algorithm = "RSA"
+}
+
+resource "acme_registration" "reg" {
+  account_key_pem = "${tls_private_key.private_key.private_key_pem}"
+  email_address   = "${var.service_account_email}"
+}
+
+resource "acme_certificate" "certificate" {
+  account_key_pem           = "${acme_registration.reg.account_key_pem}"
+  common_name               = "${var.env_name}.${var.dns_suffix}"
+  subject_alternative_names = [
+    "*.${var.env_name}.${var.dns_suffix}",
+    "*.apps.${var.env_name}.${var.dns_suffix}",
+    "*.sys.${var.env_name}.${var.dns_suffix}",
+    "*.login.sys.${var.env_name}.${var.dns_suffix}",
+    "*.uaa.sys.${var.env_name}.${var.dns_suffix}",
+  ]
+
+  dns_challenge {
+    provider = "azure"
+
+    config {
+      AZURE_CLIENT_ID = "${var.client_id}"
+      AZURE_CLIENT_SECRET = "${var.client_secret}"
+      AZURE_SUBSCRIPTION_ID = "${var.subscription_id}"
+      AZURE_TENANT_ID = "${var.tenant_id}"
+      AZURE_RESOURCE_GROUP = "${module.infra.resource_group_name}"
+    }
+  }
 }

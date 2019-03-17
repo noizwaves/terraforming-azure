@@ -14,6 +14,8 @@ variable "env_name" {}
 
 variable "location" {}
 
+variable "service_account_email" {}
+
 # Optional variables (the following have default values):
 
 variable "cloud_name" {

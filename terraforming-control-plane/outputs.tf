@@ -130,3 +130,16 @@ output "control_plane_db_username" {
 output "control_plane_domain" {
   value = "${module.control_plane.dns_name}"
 }
+
+output "lets_encrypt_cert" {
+  value = "${acme_certificate.certificate.certificate_pem}"
+  sensitive = true
+}
+output "lets_encrypt_chain" {
+  value = "${acme_certificate.certificate.issuer_pem}"
+  sensitive = true
+}
+output "lets_encrypt_privkey" {
+  value = "${acme_certificate.certificate.private_key_pem}"
+  sensitive = true
+}
