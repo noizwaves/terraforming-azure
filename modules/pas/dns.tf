@@ -1,5 +1,5 @@
 resource "azurerm_dns_a_record" "apps" {
-  name                = "*.apps.${var.env_name}"
+  name                = "*.apps"
   zone_name           = "${var.dns_zone_name}"
   resource_group_name = "${var.resource_group_name}"
   ttl                 = "60"
@@ -7,7 +7,7 @@ resource "azurerm_dns_a_record" "apps" {
 }
 
 resource "azurerm_dns_a_record" "sys" {
-  name                = "*.sys.${var.env_name}"
+  name                = "*.sys"
   zone_name           = "${var.dns_zone_name}"
   resource_group_name = "${var.resource_group_name}"
   ttl                 = "60"
@@ -15,7 +15,7 @@ resource "azurerm_dns_a_record" "sys" {
 }
 
 resource "azurerm_dns_a_record" "ssh" {
-  name                = "ssh.sys.${var.env_name}"
+  name                = "ssh.sys"
   zone_name           = "${var.dns_zone_name}"
   resource_group_name = "${var.resource_group_name}"
   ttl                 = "60"
@@ -23,7 +23,7 @@ resource "azurerm_dns_a_record" "ssh" {
 }
 
 resource "azurerm_dns_a_record" "mysql" {
-  name                = "mysql.${var.env_name}"
+  name                = "mysql"
   zone_name           = "${var.dns_zone_name}"
   resource_group_name = "${var.resource_group_name}"
   ttl                 = "60"
@@ -31,7 +31,7 @@ resource "azurerm_dns_a_record" "mysql" {
 }
 
 resource "azurerm_dns_a_record" "tcp" {
-  name                = "tcp.${var.env_name}"
+  name                = "tcp"
   zone_name           = "${var.dns_zone_name}"
   resource_group_name = "${var.resource_group_name}"
   ttl                 = "60"
