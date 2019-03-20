@@ -64,8 +64,8 @@ module "control_plane" {
 
 resource "azurerm_dns_caa_record" "caa" {
   name                = "@"
-  zone_name           = "${module.infra.dns_zone_name}"
-  resource_group_name = "${module.infra.resource_group_name}"
+  zone_name           = "${var.dns_suffix}"
+  resource_group_name = "pe-root"
   ttl                 = "60"
 
   record {
@@ -73,6 +73,19 @@ resource "azurerm_dns_caa_record" "caa" {
     tag = "issue"
     value = "letsencrypt.org"
   }
+
+  lifecycle {
+    prevent_destroy = true
+  }
+}
+
+resource "azurerm_dns_ns_record" "subdomain_ns" {
+  name = "${var.env_name}"
+  zone_name = "${var.dns_suffix}"
+  resource_group_name = "pe-root"
+  ttl                 = "60"
+
+  records = ["${module.infra.dns_zone_name_servers}"]
 }
 
 resource "tls_private_key" "private_key" {
@@ -92,11 +105,12 @@ resource "acme_certificate" "certificate" {
     "*.apps.${var.env_name}.${var.dns_suffix}",
     "*.sys.${var.env_name}.${var.dns_suffix}",
     "*.login.sys.${var.env_name}.${var.dns_suffix}",
-    "*.uaa.sys.${var.env_name}.${var.dns_suffix}",
+    "*.uaa.sys.${var.env_name}.${var.dns_suffix}"
   ]
 
   dns_challenge {
     provider = "azure"
+    recursive_nameservers = ["8.8.8.8:53"]
 
     config {
       AZURE_CLIENT_ID = "${var.client_id}"
